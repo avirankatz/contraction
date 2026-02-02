@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Droplets } from 'lucide-react';
+import { Droplets, Info } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { cn, generateId } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/use-local-storage";
+import { determineLaborStage } from "@/lib/labor-logic";
 
 interface Contraction {
   id: string;
@@ -26,6 +27,7 @@ function App() {
 
   const [waterBreakTime, setWaterBreakTime] = useLocalStorage<number | null>('waterBreakTime', null);
 
+  const [showAnalysis, setShowAnalysis] = useState(false);
   const [currentTime, setCurrentTime] = useState(Date.now());
 
   useEffect(() => {
@@ -81,6 +83,8 @@ function App() {
 
   const completedContractions = contractions.filter(c => c.endTime !== null);
   const lastCompleted = completedContractions.length > 0 ? completedContractions[0] : null;
+
+  const analysis = determineLaborStage(contractions);
 
   const formatDuration = (ms: number) => {
     // Prevent negative numbers which cause display glitches like "1-:1-"
@@ -158,7 +162,7 @@ function App() {
             </span>
         </Button>
 
-        <div className="w-full flex justify-center mb-10">
+        <div className="w-full flex justify-center gap-4 mb-10">
           <Button
             variant={waterBreakTime ? "secondary" : "ghost"} 
             size="sm"
@@ -180,7 +184,34 @@ function App() {
               <span>דיווח ירידת מים</span>
             )}
           </Button>
+
+          <Button
+            variant="ghost" 
+            size="sm"
+            onClick={() => setShowAnalysis(!showAnalysis)}
+            className="rounded-full px-6 py-6 border border-transparent hover:border-purple-200 hover:bg-purple-50 hover:text-purple-700 text-muted-foreground transition-all duration-300"
+          >
+            <Info className="w-5 h-5 ml-2" />
+            <span>איזה שלב אני?</span>
+          </Button>
         </div>
+
+        {showAnalysis && (
+            <div className="w-full mb-10 animate-in fade-in slide-in-from-top-4 duration-500">
+               <Card className={cn("border-2 shadow-lg", analysis.color)}>
+                  <CardHeader>
+                    <CardTitle>{analysis.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="mb-4 font-medium">{analysis.description}</p>
+                    <div className="bg-white/50 p-4 rounded-lg text-sm">
+                        <span className="font-bold ml-1">המלצה:</span>
+                        {analysis.recommendation}
+                    </div>
+                  </CardContent>
+               </Card>
+            </div>
+        )}
 
         <Card className="w-full mb-12 border-none shadow-lg bg-card/80 backdrop-blur-sm">
             <CardContent className="flex justify-between items-center p-8">

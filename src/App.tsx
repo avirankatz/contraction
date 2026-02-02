@@ -13,6 +13,7 @@ import {
 import { cn, generateId } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { determineLaborStage } from "@/lib/labor-logic";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 interface Contraction {
   id: string;
@@ -136,6 +137,7 @@ function App() {
       </header>
       
       <main className="w-full px-6 flex flex-col items-center">
+        <InstallPrompt />
         <div className="h-20 flex items-center justify-center mb-8 text-foreground">
              {activeContraction ? (
                  <div className="text-7xl font-bold tabular-nums text-primary animate-pulse-slow">

@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn, generateId } from "@/lib/utils";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 interface Contraction {
   id: string;
@@ -19,44 +20,24 @@ interface Contraction {
 }
 
 function App() {
-  const [contractions, setContractions] = useState<Contraction[]>(() => {
-    const saved = localStorage.getItem('contractions');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [contractions, setContractions] = useLocalStorage<Contraction[]>('contractions', []);
   
-  const [activeContractionId, setActiveContractionId] = useState<string | null>(() => {
-     const savedActive = localStorage.getItem('activeContractionId');
-     return savedActive ? JSON.parse(savedActive) : null;
-  });
+  const [activeContractionId, setActiveContractionId] = useLocalStorage<string | null>('activeContractionId', null);
 
-  const [waterBreakTime, setWaterBreakTime] = useState<number | null>(() => {
-    const saved = localStorage.getItem('waterBreakTime');
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [waterBreakTime, setWaterBreakTime] = useLocalStorage<number | null>('waterBreakTime', null);
 
   const [currentTime, setCurrentTime] = useState(Date.now());
 
   useEffect(() => {
-    localStorage.setItem('contractions', JSON.stringify(contractions));
-  }, [contractions]);
-
-  useEffect(() => {
-      localStorage.setItem('activeContractionId', JSON.stringify(activeContractionId));
-  }, [activeContractionId]);
-
-  useEffect(() => {
-    localStorage.setItem('waterBreakTime', JSON.stringify(waterBreakTime));
-  }, [waterBreakTime]);
-
-  useEffect(() => {
     let interval: number;
-    if (activeContractionId || waterBreakTime) {
+    // Run timer if active, water break reported, or history exists (for "time since last")
+    if (activeContractionId || waterBreakTime || contractions.length > 0) {
       interval = setInterval(() => {
         setCurrentTime(Date.now());
-      }, 1000);
+      }, 1000); // Keep 1s updates for smooth seconds display
     }
     return () => clearInterval(interval);
-  }, [activeContractionId, waterBreakTime]);
+  }, [activeContractionId, waterBreakTime, contractions]);
 
 
   const activeContraction = activeContractionId 

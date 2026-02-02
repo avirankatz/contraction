@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Soft Coral Primary */
+    --primary: 0 100% 80%; /* #FF9B9B - converted to HSL approx */
+    --primary-foreground: 0 0% 100%;
+
+    /* Peach Secondary */
+    --secondary: 33 100% 82%; /* #FFD6A5 */
+    --secondary-foreground: 20 14% 4%;
+
+    /* Warm White Background */
+    --background: 30 50% 98%; /* #FFF9F5 */
+    --foreground: 20 14% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 20 14% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14% 4%;
+
+    --muted: 30 20% 96%;
+    --muted-foreground: 25 5.3% 44.7%;
+
+    --accent: 30 30% 96%;
+    --accent-foreground: 24 9.8% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 0 100% 80%;
+
+    --radius: 1.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-rubik antialiased selection:bg-primary/30;
+    direction: rtl;
+  }
+}
